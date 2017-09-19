@@ -5,8 +5,8 @@
 ; You can read the full terms at https://account.elderscrollsonline.com/add-on-terms
 
 ## Title: CraftedPotions
-## APIVersion: 100019 100020
-## Version: 13
+## APIVersion: 100020 100021
+## Version: 14
 ## Author: Ayantir
 ## Description: Display different colors for your crafted potions
 

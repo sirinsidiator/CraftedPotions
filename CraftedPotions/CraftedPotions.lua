@@ -56,7 +56,7 @@ local function OnAddonLoaded(_, addon)
 		-- QuickSlots
 		local original_GetSlotItemQuality = GetSlotItemQuality
 		GetSlotItemQuality = function(slotIndex)
-			local itemLink = GetSlotItemLink(slotIndex) 
+			local itemLink = GetSlotItemLink(slotIndex)
 			local itemType = GetItemLinkItemType(itemLink)
 			if itemType == ITEMTYPE_POTION or itemType == ITEMTYPE_POISON then
 				if select(24, ZO_LinkHandler_ParseLink(itemLink)) ~= "0" then
@@ -165,7 +165,7 @@ local function OnAddonLoaded(_, addon)
 				if select(24, ZO_LinkHandler_ParseLink(itemLink)) ~= "0" then
 					local quality = changeQuality(itemLink)
 					local icon, name, stack, price, _, meetsRequirementsToEquip = original_GetBuybackItemInfo(entryIndex)
-					return icon, name, stack, price, quality, meetsRequirementsToEquip 
+					return icon, name, stack, price, quality, meetsRequirementsToEquip
 				end
 			end
 			return original_GetBuybackItemInfo(entryIndex)
@@ -210,7 +210,7 @@ local function OnAddonLoaded(_, addon)
 				if select(24, ZO_LinkHandler_ParseLink(itemLink)) ~= "0" then
 					local quality = changeQuality(itemLink)
 					local name, icon, stack, sellPrice, meetsUsageRequirement, equipType, itemStyle, _ = original_GetAlchemyResultingItemInfo(solventBagId, solventSlotIndex, reagent1BagId, reagent1SlotIndex, reagent2BagId, reagent2SlotIndex, reagent3BagId, reagent3SlotIndex)
-					return name, icon, stack, sellPrice, meetsUsageRequirement, equipType, itemStyle, quality 
+					return name, icon, stack, sellPrice, meetsUsageRequirement, equipType, itemStyle, quality
 				end
 			end
 			return original_GetAlchemyResultingItemInfo(solventBagId, solventSlotIndex, reagent1BagId, reagent1SlotIndex, reagent2BagId, reagent2SlotIndex, reagent3BagId, reagent3SlotIndex)
@@ -244,7 +244,7 @@ local function OnAddonLoaded(_, addon)
 		end
 
 		local function TooltipHook(tooltipControl, method, linkFunc)
-			local origMethod = tooltipControl[method]     
+			local origMethod = tooltipControl[method]
 			tooltipControl[method] = function(self, ...)
 				local orgText = GetString(SI_TOOLTIP_ITEM_NAME)
 				local itemLink = linkFunc(...)
