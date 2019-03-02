@@ -1,4 +1,5 @@
 local ADDON_NAME = "CraftedPotions"
+_G[ADDON_NAME] = {}
 
 local function OnAddonLoaded(_, addon)
     if addon ~= ADDON_NAME then return end
@@ -28,6 +29,7 @@ local function OnAddonLoaded(_, addon)
 
     local function ModifyAPIMethod(functionName, itemLinkFunction, qualityIndex)
         local original = _G[functionName]
+        _G[ADDON_NAME][functionName] = original
         _G[functionName] = function(...)
             local itemLink = itemLinkFunction(...)
             if IsCraftedPotion(itemLink) then
