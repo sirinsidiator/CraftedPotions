@@ -26,179 +26,81 @@ local function OnAddonLoaded(_, addon)
         return quality
     end
 
+    local function ModifyAPIMethod(functionName, itemLinkFunction, qualityIndex)
+        local original = _G[functionName]
+        _G[functionName] = function(...)
+            local itemLink = itemLinkFunction(...)
+            if IsCraftedPotion(itemLink) then
+                if(qualityIndex) then
+                    local data = {original(...)}
+                    data[qualityIndex] = ChangeQuality(itemLink)
+                    return unpack(data)
+                else
+                    return ChangeQuality(itemLink)
+                end
+            end
+            return original(...)
+        end
+    end
+
+    local function ReturnItemLink(itemLink)
+        return itemLink
+    end
+
     -- Rewriting core functions
 
     -- Shared (Gamepad UI, Addons)
-    local original_GetItemQuality = GetItemQuality
-    GetItemQuality = function(bagId, slotIndex)
-        local itemLink = GetItemLink(bagId, slotIndex)
-        if IsCraftedPotion(itemLink) then
-            return ChangeQuality(itemLink)
-        end
-        return original_GetItemQuality(bagId, slotIndex)
-    end
+    ModifyAPIMethod("GetItemQuality", GetItemLink)
 
     -- Shared (Gamepad UI, Addons)
-    local original_GetItemLinkQuality = GetItemLinkQuality
-    GetItemLinkQuality = function(itemLink)
-        if IsCraftedPotion(itemLink) then
-            return ChangeQuality(itemLink)
-        end
-        return original_GetItemLinkQuality(itemLink)
-    end
+    ModifyAPIMethod("GetItemLinkQuality", ReturnItemLink)
 
     -- QuickSlots
-    local original_GetSlotItemQuality = GetSlotItemQuality
-    GetSlotItemQuality = function(slotIndex)
-        local itemLink = GetSlotItemLink(slotIndex)
-        if IsCraftedPotion(itemLink) then
-            return ChangeQuality(itemLink)
-        end
-        return original_GetSlotItemQuality(slotIndex)
-    end
+    ModifyAPIMethod("GetSlotItemQuality", GetSlotItemLink)
 
     -- Bags
     local GET_ITEM_INFO_QUALITY_INDEX = 8
-    local original_GetItemInfo = GetItemInfo
-    GetItemInfo = function(bagId, slotIndex)
-        local itemLink = GetItemLink(bagId, slotIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetItemInfo(bagId, slotIndex)}
-            data[GET_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetItemInfo(bagId, slotIndex)
-    end
+    ModifyAPIMethod("GetItemInfo", GetItemLink, GET_ITEM_INFO_QUALITY_INDEX)
 
     -- Trading House listings
     local GET_TRADING_HOUSE_LISTING_ITEM_INFO_QUALITY_INDEX = 3
-    local original_GetTradingHouseListingItemInfo = GetTradingHouseListingItemInfo
-    GetTradingHouseListingItemInfo = function(index)
-        local itemLink = GetTradingHouseListingItemLink(index)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetTradingHouseListingItemInfo(index)}
-            data[GET_TRADING_HOUSE_LISTING_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetTradingHouseListingItemInfo(index)
-    end
+    ModifyAPIMethod("GetTradingHouseListingItemInfo", GetTradingHouseListingItemLink, GET_TRADING_HOUSE_LISTING_ITEM_INFO_QUALITY_INDEX)
 
     -- Trading House searches
     local GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_QUALITY_INDEX = 3
-    local original_GetTradingHouseSearchResultItemInfo = GetTradingHouseSearchResultItemInfo
-    GetTradingHouseSearchResultItemInfo = function(index)
-        local itemLink = GetTradingHouseSearchResultItemLink(index)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetTradingHouseSearchResultItemInfo(index)}
-            data[GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetTradingHouseSearchResultItemInfo(index)
-    end
+    ModifyAPIMethod("GetTradingHouseSearchResultItemInfo", GetTradingHouseSearchResultItemLink, GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_QUALITY_INDEX)
 
     -- Stores
     local GET_STORE_ENTRY_INFO_QUALITY_INDEX = 8
-    local original_GetStoreEntryInfo = GetStoreEntryInfo
-    GetStoreEntryInfo = function(entryIndex)
-        local itemLink = GetStoreItemLink(entryIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetStoreEntryInfo(entryIndex)}
-            data[GET_STORE_ENTRY_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetStoreEntryInfo(entryIndex)
-    end
+    ModifyAPIMethod("GetStoreEntryInfo", GetStoreItemLink, GET_STORE_ENTRY_INFO_QUALITY_INDEX)
 
     -- Guild Log
     local GET_GUILD_SPECIFIC_ITEM_INFO_QUALITY_INDEX = 3
-    local original_GetGuildSpecificItemInfo = GetGuildSpecificItemInfo
-    GetGuildSpecificItemInfo = function(index)
-        local itemLink = GetGuildSpecificItemLink(index)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetGuildSpecificItemInfo(index)}
-            data[GET_GUILD_SPECIFIC_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetGuildSpecificItemInfo(index)
-    end
+    ModifyAPIMethod("GetGuildSpecificItemInfo", GetGuildSpecificItemLink, GET_GUILD_SPECIFIC_ITEM_INFO_QUALITY_INDEX)
 
     -- Trade between players
     local GET_TRADE_ITEM_INFO_QUALITY_INDEX = 3
-    local original_GetTradeItemInfo = GetTradeItemInfo
-    GetTradeItemInfo = function(who, tradeIndex)
-        local itemLink = GetTradeItemLink(who, tradeIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetTradeItemInfo(who, tradeIndex)}
-            data[GET_TRADE_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetTradeItemInfo(who, tradeIndex)
-    end
+    ModifyAPIMethod("GetTradeItemInfo", GetTradeItemLink, GET_TRADE_ITEM_INFO_QUALITY_INDEX)
 
     -- Store Buyback
     local GET_BUY_BACK_ITEM_INFO_QUALITY_INDEX = 3
-    local original_GetBuybackItemInfo = GetBuybackItemInfo
-    GetBuybackItemInfo = function(entryIndex)
-        local itemLink = GetBuybackItemLink(entryIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetBuybackItemInfo(entryIndex)}
-            data[GET_BUY_BACK_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetBuybackItemInfo(entryIndex)
-    end
+    ModifyAPIMethod("GetBuybackItemInfo", GetBuybackItemLink, GET_BUY_BACK_ITEM_INFO_QUALITY_INDEX)
 
     -- Mails
     local GET_ATTACHED_ITEM_INFO_QUALITY_INDEX = 8
-    local original_GetAttachedItemInfo = GetAttachedItemInfo
-    GetAttachedItemInfo = function(mailId, attachIndex)
-        local itemLink = GetAttachedItemLink(mailId, attachIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetAttachedItemInfo(mailId, attachIndex)}
-            data[GET_ATTACHED_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetAttachedItemInfo(mailId, attachIndex)
-    end
+    ModifyAPIMethod("GetAttachedItemInfo", GetAttachedItemLink, GET_ATTACHED_ITEM_INFO_QUALITY_INDEX)
 
     -- Loots
     local GET_LOOT_ITEM_INFO_QUALITY_INDEX = 5
-    local original_GetLootItemInfo = GetLootItemInfo
-    GetLootItemInfo = function(lootIndex)
-        local itemLink = GetLootItemLink(lootIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetLootItemInfo(lootIndex)}
-            data[GET_LOOT_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetLootItemInfo(lootIndex)
-    end
+    ModifyAPIMethod("GetLootItemInfo", GetLootItemLink, GET_LOOT_ITEM_INFO_QUALITY_INDEX)
 
     -- Gamepad Alchemy UI
     local GET_ALCHEMY_RESULTING_ITEM_INFO_QUALITY_INDEX = 8
-    local original_GetAlchemyResultingItemInfo = GetAlchemyResultingItemInfo
-    GetAlchemyResultingItemInfo = function(solventBagId, solventSlotIndex, reagent1BagId, reagent1SlotIndex, reagent2BagId, reagent2SlotIndex, reagent3BagId, reagent3SlotIndex)
-        local itemLink = GetAlchemyResultingItemLink(solventBagId, solventSlotIndex, reagent1BagId, reagent1SlotIndex, reagent2BagId, reagent2SlotIndex, reagent3BagId, reagent3SlotIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetAlchemyResultingItemInfo(solventBagId, solventSlotIndex, reagent1BagId, reagent1SlotIndex, reagent2BagId, reagent2SlotIndex, reagent3BagId, reagent3SlotIndex)}
-            data[GET_ALCHEMY_RESULTING_ITEM_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetAlchemyResultingItemInfo(solventBagId, solventSlotIndex, reagent1BagId, reagent1SlotIndex, reagent2BagId, reagent2SlotIndex, reagent3BagId, reagent3SlotIndex)
-    end
+    ModifyAPIMethod("GetAlchemyResultingItemInfo", GetAlchemyResultingItemLink, GET_ALCHEMY_RESULTING_ITEM_INFO_QUALITY_INDEX)
 
     -- When you learn a new trait ?
     local GET_LAST_CRAFTING_RESULT_LEARNED_TRAIT_INFO_QUALITY_INDEX = 8
-    local original_GetLastCraftingResultLearnedTraitInfo = GetLastCraftingResultLearnedTraitInfo
-    GetLastCraftingResultLearnedTraitInfo = function(resultIndex)
-        local itemLink = GetAlchemyResultingItemLink(resultIndex)
-        if IsCraftedPotion(itemLink) then
-            local data = {original_GetLastCraftingResultLearnedTraitInfo(resultIndex)}
-            data[GET_LAST_CRAFTING_RESULT_LEARNED_TRAIT_INFO_QUALITY_INDEX] = ChangeQuality(itemLink)
-            return unpack(data)
-        end
-        return original_GetLastCraftingResultLearnedTraitInfo(resultIndex)
-    end
+    ModifyAPIMethod("GetLastCraftingResultLearnedTraitInfo", GetAlchemyResultingItemLink, GET_LAST_CRAFTING_RESULT_LEARNED_TRAIT_INFO_QUALITY_INDEX)
 
     -- Shared function for tooltips
     local function ModifyTooltip(itemLink)
@@ -218,10 +120,6 @@ local function OnAddonLoaded(_, addon)
             origMethod(self, ...)
             SafeAddString(SI_TOOLTIP_ITEM_NAME, orgText, 1)
         end
-    end
-
-    local function ReturnItemLink(itemLink)
-        return itemLink
     end
 
     -- ItemTooltip are tooltips displayed when you hover an item
