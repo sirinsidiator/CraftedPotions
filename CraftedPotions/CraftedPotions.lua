@@ -11,7 +11,7 @@ local function OnAddonLoaded(_, addon)
     end
 
     local function ChangeQuality(itemLink)
-        local quality = ITEM_QUALITY_NORMAL
+        local quality = ITEM_DISPLAY_QUALITY_NORMAL
         for i = 1, GetMaxTraits() do
             local hasTraitAbility = GetItemLinkTraitOnUseAbilityInfo(itemLink, i)
 
@@ -20,8 +20,8 @@ local function OnAddonLoaded(_, addon)
             end
         end
 
-        if quality == ITEM_QUALITY_NORMAL then
-            quality = ITEM_QUALITY_MAGIC
+        if quality == ITEM_DISPLAY_QUALITY_NORMAL then
+            quality = ITEM_DISPLAY_QUALITY_MAGIC
         end
 
         return quality
@@ -52,25 +52,25 @@ local function OnAddonLoaded(_, addon)
     -- Rewriting core functions
 
     -- Shared (Gamepad UI, Addons)
-    ModifyAPIMethod("GetItemQuality", GetItemLink)
+    ModifyAPIMethod("GetItemDisplayQuality", GetItemLink)
 
     -- Shared (Gamepad UI, Addons)
-    ModifyAPIMethod("GetItemLinkQuality", ReturnItemLink)
+    ModifyAPIMethod("GetItemLinkDisplayQuality", ReturnItemLink)
 
     -- QuickSlots
-    ModifyAPIMethod("GetSlotItemQuality", GetSlotItemLink)
+    ModifyAPIMethod("GetSlotItemDisplayQuality", GetSlotItemLink)
 
     -- Bags
-    local GET_ITEM_INFO_QUALITY_INDEX = 8
-    ModifyAPIMethod("GetItemInfo", GetItemLink, GET_ITEM_INFO_QUALITY_INDEX)
+    local GET_ITEM_INFO_DISPLAY_QUALITY_INDEX = 9
+    ModifyAPIMethod("GetItemInfo", GetItemLink, GET_ITEM_INFO_DISPLAY_QUALITY_INDEX)
 
     -- Trading House listings
-    local GET_TRADING_HOUSE_LISTING_ITEM_INFO_QUALITY_INDEX = 3
-    ModifyAPIMethod("GetTradingHouseListingItemInfo", GetTradingHouseListingItemLink, GET_TRADING_HOUSE_LISTING_ITEM_INFO_QUALITY_INDEX)
+    local GET_TRADING_HOUSE_LISTING_ITEM_INFO_DISPLAY_QUALITY_INDEX = 3
+    ModifyAPIMethod("GetTradingHouseListingItemInfo", GetTradingHouseListingItemLink, GET_TRADING_HOUSE_LISTING_ITEM_INFO_DISPLAY_QUALITY_INDEX)
 
     -- Trading House searches
-    local GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_QUALITY_INDEX = 3
-    ModifyAPIMethod("GetTradingHouseSearchResultItemInfo", GetTradingHouseSearchResultItemLink, GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_QUALITY_INDEX)
+    local GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_DISPLAY_QUALITY_INDEX = 3
+    ModifyAPIMethod("GetTradingHouseSearchResultItemInfo", GetTradingHouseSearchResultItemLink, GET_TRADING_HOUSE_SEARCH_RESULT_ITEM_INFO_DISPLAY_QUALITY_INDEX)
 
     -- Stores
     local GET_STORE_ENTRY_INFO_QUALITY_INDEX = 8
@@ -81,16 +81,16 @@ local function OnAddonLoaded(_, addon)
     ModifyAPIMethod("GetGuildSpecificItemInfo", GetGuildSpecificItemLink, GET_GUILD_SPECIFIC_ITEM_INFO_QUALITY_INDEX)
 
     -- Trade between players
-    local GET_TRADE_ITEM_INFO_QUALITY_INDEX = 3
-    ModifyAPIMethod("GetTradeItemInfo", GetTradeItemLink, GET_TRADE_ITEM_INFO_QUALITY_INDEX)
+    local GET_TRADE_ITEM_INFO_DISPLAY_QUALITY_INDEX = 4
+    ModifyAPIMethod("GetTradeItemInfo", GetTradeItemLink, GET_TRADE_ITEM_INFO_DISPLAY_QUALITY_INDEX)
 
     -- Store Buyback
-    local GET_BUY_BACK_ITEM_INFO_QUALITY_INDEX = 3
-    ModifyAPIMethod("GetBuybackItemInfo", GetBuybackItemLink, GET_BUY_BACK_ITEM_INFO_QUALITY_INDEX)
+    local GET_BUY_BACK_ITEM_INFO_FUNCTIONAL_QUALITY_INDEX = 5 -- Game actually uses functional quality here instead of display quality
+    ModifyAPIMethod("GetBuybackItemInfo", GetBuybackItemLink, GET_BUY_BACK_ITEM_INFO_FUNCTIONAL_QUALITY_INDEX)
 
     -- Mails
-    local GET_ATTACHED_ITEM_INFO_QUALITY_INDEX = 8
-    ModifyAPIMethod("GetAttachedItemInfo", GetAttachedItemLink, GET_ATTACHED_ITEM_INFO_QUALITY_INDEX)
+    local GET_ATTACHED_ITEM_INFO_DISPLAY_QUALITY_INDEX = 8
+    ModifyAPIMethod("GetAttachedItemInfo", GetAttachedItemLink, GET_ATTACHED_ITEM_INFO_DISPLAY_QUALITY_INDEX)
 
     -- Loots
     local GET_LOOT_ITEM_INFO_QUALITY_INDEX = 5
